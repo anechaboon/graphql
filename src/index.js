@@ -1,5 +1,5 @@
 const { GraphQLServer } = require('graphql-yoga')
-
+const { v4: uuidv4 } = require('uuid')
 const users = [
     {
         id:'1',
@@ -51,6 +51,10 @@ const typeDefs = `
         age: Int!
         location: Location
     }
+
+    type Mutation {
+        addUser(name: String!, age:Int!): [Users!]!
+    }
 `
 
 const resolvers = {
@@ -76,7 +80,18 @@ const resolvers = {
         users() {
             return users
         }
+    },
+    Mutation: {
+        addUser(parent, args, ctx, info){
+            const { name, age } = args
+            users.push({
+                id: uuidv4(),
+                name,
+                age
+            })
 
+            return users
+        }
     }
 }
 
