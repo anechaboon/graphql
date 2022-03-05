@@ -54,6 +54,7 @@ const typeDefs = `
 
     type Mutation {
         addUser(name: String!, age:Int!): [Users!]!
+        updateUser(id: ID!, name: String, age:Int): Users!
     }
 `
 
@@ -91,7 +92,27 @@ const resolvers = {
             })
 
             return users
+        },
+
+        updateUser(parent, args, ctx, info){
+            const { id, name, age} = args
+            const user = users.find((user) => user.id === id)
+
+            if(!user){
+                throw new Error(`user with id ${id} does not exist.`)
+            }
+
+            if(name){
+                user.name = name
+            }
+
+            if(age){
+                user.age = age
+            }
+
+            return user
         }
+
     }
 }
 
