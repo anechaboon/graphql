@@ -55,6 +55,7 @@ const typeDefs = `
     type Mutation {
         addUser(name: String!, age:Int!): [Users!]!
         updateUser(id: ID!, name: String, age:Int): Users!
+        deleteUser(id: ID!): Users!
     }
 `
 
@@ -111,6 +112,16 @@ const resolvers = {
             }
 
             return user
+        },
+
+        deleteUser(parent, args, ctx, info){
+            const index = users.findIndex((index) => index.id === args.id)
+            if(index === -1){
+                throw new Error(`user with id ${id} does not exist.`)
+            }
+
+            const deletedUser = users.splice(index, 1);
+            return deletedUser[0];
         }
 
     }
