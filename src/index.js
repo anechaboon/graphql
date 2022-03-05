@@ -1,4 +1,5 @@
-const { GraphQLServer } = require('graphql-yoga')
+const { GraphQLServer, PubSub } = require('graphql-yoga')
+const  pubsub = new PubSub();
 const { v4: uuidv4 } = require('uuid')
 const users = [
     {
@@ -57,6 +58,10 @@ const typeDefs = `
         updateUser(id: ID!, name: String, age:Int): Users!
         deleteUser(id: ID!): Users!
     }
+
+    type Subscription {
+        update: Users! 
+    }
 `
 
 const resolvers = {
@@ -110,7 +115,9 @@ const resolvers = {
             if(age){
                 user.age = age
             }
-
+            pubsub.publish('update_user', {
+                update: user
+            })
             return user
         },
 
@@ -124,6 +131,13 @@ const resolvers = {
             return deletedUser[0];
         }
 
+    },
+    Subscription: {
+        update: {
+            subscribe(parent, args, ctx, info){
+                return pubsub.asyncIterator('update_user')
+            }
+        }
     }
 }
 
