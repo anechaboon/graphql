@@ -5,26 +5,40 @@ const Query = require('./resolvers/Query')
 const Mutation = require('./resolvers/Mutation')
 const Subscription = require('./resolvers/Subscription')
 const users = require('./utils/User')
+const pool = require('./utils/connectDB')
 
-const server = new GraphQLServer({
-    typeDefs: './src/schema.graphql',
-    resolvers: {
-        Query,
-        Mutation,
-        Subscription
-    },
-    context: {
-        users,
-        pubsub
+var server = null;
+async function fnGraphQLServer(){
+    
+    const character = await pool.query("SELECT * FROM customer_tb");
+    
+
+    server = new GraphQLServer({
+        typeDefs: './src/schema.graphql',
+        resolvers: {
+            Query,
+            Mutation,
+            Subscription
+        },
+        context: {
+            users,
+            character,
+            pubsub
+        }
+    })
+
+    const options = {
+        port: 4000,
+        endpoint: '/graphql'
     }
-})
+    
+    server.start(options, ({ port }) => 
+        console.log(`Server started on port ${port}`)
+    )
 
-const options = {
-    port: 4000,
-    endpoint: '/graphql'
 }
+fnGraphQLServer()
 
-server.start(options, ({ port }) => 
-    console.log(`Server started on port ${port}`)
-)
+
+
 

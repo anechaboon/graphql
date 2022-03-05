@@ -1,11 +1,7 @@
 type Query {
-        name: String!
-        age: Int!
-        isSingle: Boolean
-        numbers: [Int!]!
-        location: Location 
-        users: [Users!]!
-    }
+    users: [Users!]!
+    marvelCharacter: [MarvelCharacter!]!
+}
 
 type Location {
     state: String!
@@ -17,6 +13,14 @@ type Users {
     name: String!
     age: Int!
     location: Location
+}
+
+type MarvelCharacter {
+    id: ID!
+    firstname: String!
+    lastname: String!
+    email: String!
+    phone: String!
 }
 
 type Mutation {
